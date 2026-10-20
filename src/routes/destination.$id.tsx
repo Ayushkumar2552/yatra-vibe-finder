@@ -5,38 +5,41 @@ import { getDestination, ORIGIN_CITIES } from "@/data/destinations";
 import { estimate, inr, type Tier } from "@/lib/engine/estimate";
 import { buildItinerary } from "@/lib/engine/itinerary";
 import { weatherSuitability } from "@/lib/engine/recommend";
-import { destImage } from "@/lib/images";
+import { DestinationGallery } from "@/components/DestinationGallery";
 import { MONTHS } from "@/lib/planner-params";
 import { useWeather } from "@/lib/weather/useWeather";
 
 export const Route = createFileRoute("/destination/$id")({
-  loader: ({ params }) => { const d = getDestination(params.id); if (!d) throw notFound(); return { name: d.name, state: d.state }; },
+  loader: ({ params }) => { const d = getDestination(params.id); if (!d) throw notFound(); return d; },
   head: ({ loaderData }) => ({ meta: [
     { title: loaderData ? `${loaderData.name}, ${loaderData.state} — YatraAI` : "Destination — YatraAI" },
     { name: "description", content: loaderData ? `Estimated budget, weather, best time and itinerary for ${loaderData.name}.` : "Destination details" },
     { property: "og:title", content: loaderData ? `${loaderData.name} — YatraAI` : "YatraAI" },
     { property: "og:description", content: "Estimated budget, weather and a day-wise itinerary." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    ...(loaderData?.image.startsWith("https://") ? [{ property: "og:image", content: loaderData.image }, { name: "twitter:image", content: loaderData.image }] : []),
   ] }),
   component: Detail,
 });
 
 function Detail() {
-  const { id } = Route.useParams();
-  const d = getDestination(id)!;
+  const d = Route.useLoaderData();
   const [from, setFrom] = useState("Delhi");
   const [travelers, setT] = useState(2);
   const [days, setDays] = useState(d.days[1]);
   const [tier, setTier] = useState<Tier>("mid");
   const { weather } = useWeather([d], new Date().getMonth() + 1);
   const w = weather[d.id];
-  const city = ORIGIN_CITIES.find((c) => c.name === from)!;
+  const city = ORIGIN_CITIES.find((c) => c.name === from) ?? ORIGIN_CITIES[0];
+  if (!city) return null;
   const e = estimate(d, city, travelers, days, "any", tier);
   const rows = [["Stay", e.stay], ["Food", e.food], ["Local transport", e.local], ["Activities", e.activities], [`Intercity (${e.mode}, ~${e.km} km round-trip ×2)`, e.intercity]] as const;
   const inp = "rounded-full border bg-card px-4 py-2 text-sm";
   return (
     <div>
       <section className="relative h-[60svh] min-h-[420px] overflow-hidden">
-        <img src={destImage(d)} alt={d.name} className="size-full object-cover" />
+        <DestinationGallery images={d.images} labels={d.imageLabels} name={d.name} hero />
         <div className="absolute inset-0 media-scrim" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1400px] space-y-3 px-5 pb-10 text-on-media md:px-8">
           <Badges d={d} onMedia />

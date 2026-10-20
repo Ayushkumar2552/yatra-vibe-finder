@@ -9,6 +9,7 @@ import { FACTOR_LABEL, WEIGHTS, type Factor, type Recommendation } from "@/lib/e
 import type { WeatherNow } from "@/lib/weather/mock";
 import { MONTHS } from "@/lib/planner-params";
 import { cn } from "@/lib/utils";
+import { DestinationGallery } from "@/components/DestinationGallery";
 
 export function WeatherIcon({ c, className }: { c: string; className?: string }) {
   const I = c === "Rain" || c === "Thunderstorm" || c === "Drizzle" ? CloudRain : c === "Snow" ? Snowflake : c === "Clouds" ? Cloud : c === "Haze" || c === "Mist" ? Wind : Sun;
@@ -126,7 +127,7 @@ export function RecommendationCard({ r, featured, rank }: { r: Recommendation; f
 export function SimpleCard({ d, w }: { d: Destination; w?: WeatherNow }) {
   return (
     <Link to="/destination/$id" params={{ id: d.id }} className="group relative block aspect-[3/4] overflow-hidden rounded-[28px] shadow-soft">
-      <img src={destImage(d)} alt={d.name} loading="lazy" width={1280} height={960} className="size-full object-cover transition duration-700 group-hover:scale-105" />
+      <DestinationGallery images={d.images} labels={d.imageLabels} name={d.name} />
       <div className="absolute inset-0 card-scrim" />
       <div className="absolute right-4 top-4"><SaveButton id={d.id} onMedia /></div>
       <div className="absolute inset-x-4 bottom-4 space-y-2 text-on-media">
