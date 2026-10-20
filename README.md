@@ -20,17 +20,9 @@ TECH: Lovable default React/TypeScript/Tailwind/shadcn stack. Organize component
 
 This is a college mini-project, so prioritize a working, impressive demonstration plus explainable AI. The site should feel production-quality and highly visual while remaining original and legally distinct from Mindtrip.
 
-This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://yatra-vibe-finder.lovable.app
 
-## Build with Lovable
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/da486828-a486-42ec-bb1b-b8d99be736c4).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
