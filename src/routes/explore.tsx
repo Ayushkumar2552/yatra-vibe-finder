@@ -4,7 +4,7 @@ import { CATEGORY_META, DESTINATIONS, type Category } from "@/data/destinations"
 import { useWeather } from "@/lib/weather/useWeather";
 
 export const Route = createFileRoute("/explore")({
-  validateSearch: (s: Record<string, unknown>): { category?: Category } => ({ category: typeof s.category === "string" && s.category in CATEGORY_META ? (s.category as Category) : undefined }),
+  validateSearch: (s: Record<string, unknown>): { category?: Category } => { const c = String(s.category ?? ""); return { category: Object.prototype.hasOwnProperty.call(CATEGORY_META, c) ? (c as Category) : undefined }; },
   head: () => ({ meta: [
     { title: "Explore India — YatraAI" }, { name: "description", content: "Browse 48 Indian destinations: beaches, mountains, heritage, desert and more." },
     { property: "og:title", content: "Explore India — YatraAI" }, { property: "og:description", content: "Beaches, mountains, heritage, desert and nature across India." },
