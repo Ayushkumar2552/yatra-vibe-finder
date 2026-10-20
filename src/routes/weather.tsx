@@ -8,6 +8,7 @@ export const Route = createFileRoute("/weather")({
   head: () => ({ meta: [
     { title: "Weather-aware picks — YatraAI" }, { name: "description", content: "Indian destinations ranked by how pleasant the weather is right now." },
     { property: "og:title", content: "Weather-aware picks — YatraAI" }, { property: "og:description", content: "Where the weather is best in India right now." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: WeatherPage,
 });

@@ -16,6 +16,7 @@ export const Route = createFileRoute("/planner")({
     { name: "description", content: "Rank Indian destinations by budget, weather, distance and vibe with explainable rules." },
     { property: "og:title", content: "AI Trip Planner — YatraAI" },
     { property: "og:description", content: "Weighted, rule-based destination ranking you can inspect." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: Planner,
 });

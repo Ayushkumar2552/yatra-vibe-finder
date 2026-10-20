@@ -8,6 +8,7 @@ export const Route = createFileRoute("/explore")({
   head: () => ({ meta: [
     { title: "Explore India — YatraAI" }, { name: "description", content: "Browse 48 Indian destinations: beaches, mountains, heritage, desert and more." },
     { property: "og:title", content: "Explore India — YatraAI" }, { property: "og:description", content: "Beaches, mountains, heritage, desert and nature across India." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: Explore,
 });

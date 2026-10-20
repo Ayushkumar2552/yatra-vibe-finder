@@ -7,6 +7,7 @@ export const Route = createFileRoute("/saved")({
   head: () => ({ meta: [
     { title: "Saved Trips — YatraAI" }, { name: "description", content: "Your saved Indian destinations." },
     { property: "og:title", content: "Saved Trips — YatraAI" }, { property: "og:description", content: "Destinations you've saved on YatraAI." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: Saved,
 });

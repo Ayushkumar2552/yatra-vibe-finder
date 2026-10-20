@@ -24,13 +24,15 @@ export interface Destination {
   highlights: string[];
   activities: string[];
   image: string; // real photo of this specific place
+  images: string[];
+  imageLabels: string[];
 }
 
 const d = (
   id: string, name: string, state: string, zone: Zone, categories: Category[], bestMonths: number[],
   daily: [number, number, number], days: [number, number], lat: number, lon: number,
   highlights: string[], activities: string[],
-): Destination => ({ image: DESTINATION_IMAGES[id], id, name, state, zone, categories, bestMonths, daily: { budget: daily[0], mid: daily[1], luxury: daily[2] }, days, lat, lon, highlights, activities });
+): Destination => ({ image: DESTINATION_IMAGES[id], images: [DESTINATION_IMAGES[id]], imageLabels: [name], id, name, state, zone, categories, bestMonths, daily: { budget: daily[0], mid: daily[1], luxury: daily[2] }, days, lat, lon, highlights, activities });
 
 
 /** One real photo per destination (Wikimedia Commons). Every id must have an entry. */

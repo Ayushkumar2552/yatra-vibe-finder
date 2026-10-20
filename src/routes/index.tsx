@@ -11,6 +11,8 @@ export const Route = createFileRoute("/")({
     { name: "description", content: "Explainable AI travel recommender for India: budget, weather and vibe-aware destination picks." },
     { property: "og:title", content: "YatraAI — India, picked for your mood" },
     { property: "og:description", content: "Find the Indian destination that fits your budget, crew and vibe — with transparent reasoning." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: Home,
 });

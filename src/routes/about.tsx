@@ -5,6 +5,7 @@ export const Route = createFileRoute("/about")({
   head: () => ({ meta: [
     { title: "How it works — YatraAI" }, { name: "description", content: "How YatraAI's explainable rule-based recommender ranks Indian destinations." },
     { property: "og:title", content: "How it works — YatraAI" }, { property: "og:description", content: "Weighted factors plus forward-chaining IF/THEN rules." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
   ] }),
   component: About,
 });
