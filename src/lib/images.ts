@@ -11,4 +11,4 @@ export const CATEGORY_IMAGE: Record<Category, string> = {
   heritage, spiritual: heritage, nature, wildlife: nature, relax: beach,
 };
 export const HERO = { beach, roadtrip, desert };
-export const destImage = (d: Destination) => d.image ?? CATEGORY_IMAGE[d.categories[0]];
+export const destImage = (d: Destination) => d.image;
