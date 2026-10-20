@@ -23,14 +23,68 @@ export interface Destination {
   lon: number;
   highlights: string[];
   activities: string[];
-  image?: string; // optional custom photo URL; falls back to category art
+  image: string; // real photo of this specific place
 }
 
 const d = (
   id: string, name: string, state: string, zone: Zone, categories: Category[], bestMonths: number[],
   daily: [number, number, number], days: [number, number], lat: number, lon: number,
   highlights: string[], activities: string[],
-): Destination => ({ id, name, state, zone, categories, bestMonths, daily: { budget: daily[0], mid: daily[1], luxury: daily[2] }, days, lat, lon, highlights, activities });
+): Destination => ({ image: DESTINATION_IMAGES[id], id, name, state, zone, categories, bestMonths, daily: { budget: daily[0], mid: daily[1], luxury: daily[2] }, days, lat, lon, highlights, activities });
+
+
+/** One real photo per destination (Wikimedia Commons). Every id must have an entry. */
+const commons = (file: string) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=1200`;
+export const DESTINATION_IMAGES: Record<string, string> = {
+  "goa": commons("Palolem_Beach,_South_Goa.jpg"),
+  "lakshadweep": commons("A_beach_side_resort_at_Kadmat_Island,_Lakshadweep.jpg"),
+  "andaman": commons("Radha_Nagar_beach,_Havelock_Island,_Andamn,_India-_Sun_set_view.jpg"),
+  "gokarna": commons("Delight_india.jpg"),
+  "puducherry": commons("Pondicherry-Rock_beach_aerial_view.jpg"),
+  "varkala": commons("Varkala_beach_from_above.jpg"),
+  "kovalam": commons("Kovalam_beach_trivandrum_kerala.jpg"),
+  "manali": commons("Solang_Valley_,Manali,_Himachal_Pardes,_India.JPG"),
+  "shimla": commons("Landscape_of_Shimla_,_Himachal_Pradesh.jpg"),
+  "mussoorie": commons("Mussoorie_Snow_Over_Dehradun_(14831297545).jpg"),
+  "nainital": commons("The_Boat_and_The_Lake.jpg"),
+  "darjeeling": commons("Tiger_Hill_Darjeeling_West_Bengal_India_(3).JPG"),
+  "munnar": commons("Munnar_Overview.jpg"),
+  "ooty": commons("Ooty_lake.jpg"),
+  "coorg": commons("Tadiandamol_Valley,_Western_Ghats.jpg"),
+  "kodaikanal": commons("Kodaikanal_lake.jpg"),
+  "gangtok": commons("Rumtek_Monastery_alias_Dharma_Chakra_Centre_near_Gangtok,_East_Sikkim_09.jpg"),
+  "leh": commons("Leh_City_seen_from_Shanti_Stupa.JPG"),
+  "spiti": commons("Spiti_River_Kaza_Himachal_Jun18_D72_7232.jpg"),
+  "gulmarg": commons("Gulmarg_gondola.JPG"),
+  "pahalgam": commons("LiddarRiverJhelum.jpeg"),
+  "srinagar": commons("Dal_Lake_Hazratbal_Srinagar.jpg"),
+  "auli": commons("Auli_Himalayas.jpg"),
+  "rishikesh": commons("Rishikesh-Lakshman_Jhula_by_Kaustubh_Nayyar.jpg"),
+  "chopta": commons("Tungnath_temple.jpg"),
+  "valley-of-flowers": commons("Valley_of_flowers_national_park,_Uttarakhand,_India_03_(edit).jpg"),
+  "varanasi": commons("Ahilya_Ghat_by_the_Ganges,_Varanasi.jpg"),
+  "ayodhya": commons("Shri_Ram_Janambhoomi_Mandir,_Ayodhya_Dham.jpg"),
+  "jaipur": commons("East_facade_Hawa_Mahal_Jaipur_from_ground_level_(July_2022)_-_img_01.jpg"),
+  "udaipur": commons("Udaipur_Lake_India.JPG"),
+  "jodhpur": commons("Mehrangarh_Fort_sanhita.jpg"),
+  "jaisalmer": commons("Jaisalmer_forteresse.jpg"),
+  "agra": commons("Taj_Mahal_(Edited).jpeg"),
+  "hampi": commons("Wide_angle_of_Galigopuram_of_Virupaksha_Temple,_Hampi_(04)_(cropped).jpg"),
+  "khajuraho": commons("1_Khajuraho.jpg"),
+  "amritsar": commons("The_Golden_Temple_of_Amrithsar_7.jpg"),
+  "mysuru": commons("Mysore_Palace_Morning.jpg"),
+  "sanchi": commons("East_Gateway_-_Stupa_1_-_Sanchi_Hill_2013-02-21_4398.JPG"),
+  "bodhgaya": commons("Mahabodhitemple.jpg"),
+  "madurai": commons("An_aerial_view_of_Madurai_city_from_atop_of_Meenakshi_Amman_temple.jpg"),
+  "shillong": commons("Elephant_Falls_II,_Shillong.jpg"),
+  "cherrapunji": commons("NohKaLikai_Falls_V2_Wiki.jpg"),
+  "kaziranga": commons("Beauty_of_Kaziranga_National_Park.jpg"),
+  "rann-of-kutch": commons("Rann_of_Kutch_-_White_Desert.jpg"),
+  "alleppey": commons("Alappuzha_Boat_Beauty_W.jpg"),
+  "wayanad": commons("Blue,_Green_&_White.jpg"),
+  "ranthambore": commons("Ranthambore_National_Park.JPG"),
+  "tawang": commons("TawangMonastery.jpg"),
+};
 
 const winter = [10, 11, 12, 1, 2, 3];
 
