@@ -10,6 +10,9 @@ export type Category =
 /** Climate zone drives the demo (mock) weather model and weather rules. */
 export type Zone = "coastal" | "hill" | "southhill" | "alpine" | "plains" | "desert" | "northeast";
 
+/** Per-person-per-day realistic cost ranges in INR (ESTIMATED, never live). */
+export interface CostRanges { food: [number, number]; local: [number, number]; activities: [number, number] }
+
 export interface Destination {
   id: string;
   name: string;
@@ -26,13 +29,33 @@ export interface Destination {
   image: string; // real photo of this specific place
   images: string[];
   imageLabels: string[];
+  airport?: string; // nearest IATA code, for live flight search
+  altitude?: number; // metres, for altitude-caution rules
+  costs: CostRanges; // destination-specific estimated ranges
 }
+
+import { COMMONS_EXTRA } from "./commons-gallery";
+import { GALLERY_ASSETS } from "./gallery-assets";
+
+/** Fallback ranges derived from the daily tier; EXTRA below overrides per destination. */
+const defaultCosts = (daily: [number, number, number]): CostRanges => ({
+  food: [Math.round(daily[0] * 0.2), Math.round(daily[1] * 0.28)],
+  local: [Math.round(daily[0] * 0.12), Math.round(daily[1] * 0.18)],
+  activities: [Math.round(daily[0] * 0.12), Math.round(daily[1] * 0.2)],
+});
 
 const d = (
   id: string, name: string, state: string, zone: Zone, categories: Category[], bestMonths: number[],
   daily: [number, number, number], days: [number, number], lat: number, lon: number,
   highlights: string[], activities: string[],
-): Destination => ({ image: DESTINATION_IMAGES[id], images: [DESTINATION_IMAGES[id]], imageLabels: [name], id, name, state, zone, categories, bestMonths, daily: { budget: daily[0], mid: daily[1], luxury: daily[2] }, days, lat, lon, highlights, activities });
+): Destination => {
+  const main = DESTINATION_IMAGES[id];
+  const assets = GALLERY_ASSETS[id] ?? [];
+  const extra = COMMONS_EXTRA[id] ?? [];
+  const images = [main, ...assets, ...extra.map((x) => x.url)].filter(Boolean);
+  const imageLabels = [name, ...assets.map(() => name), ...extra.map((x) => x.label)];
+  return { image: main, images, imageLabels, costs: defaultCosts(daily), id, name, state, zone, categories, bestMonths, daily: { budget: daily[0], mid: daily[1], luxury: daily[2] }, days, lat, lon, highlights, activities };
+};
 
 
 /** One real photo per destination (Wikimedia Commons). Every id must have an entry. */
@@ -236,6 +259,75 @@ export const DESTINATIONS: Destination[] = [
     ["Tawang monastery", "Sela pass", "Madhuri lake"],
     ["Tawang monastery prayers", "Drive over Sela pass", "Madhuri lake", "War memorial"]),
 ];
+
+/**
+ * Verified travel facts per destination: nearest airport (IATA), altitude where
+ * relevant, and destination-specific estimated daily cost ranges (INR/person).
+ */
+const EXTRA: Record<string, { airport?: string; altitude?: number; costs?: CostRanges }> = {
+  goa: { airport: "GOI", costs: { food: [400, 1200], local: [300, 800], activities: [500, 2000] } },
+  lakshadweep: { airport: "AGX", costs: { food: [800, 1500], local: [500, 1000], activities: [1500, 4000] } },
+  andaman: { airport: "IXZ", costs: { food: [500, 1200], local: [400, 900], activities: [1000, 3500] } },
+  gokarna: { airport: "GOI", costs: { food: [300, 800], local: [150, 400], activities: [200, 800] } },
+  puducherry: { airport: "PNY", costs: { food: [350, 900], local: [200, 500], activities: [300, 1000] } },
+  varkala: { airport: "TRV", costs: { food: [350, 900], local: [200, 500], activities: [300, 1200] } },
+  kovalam: { airport: "TRV", costs: { food: [400, 1000], local: [200, 500], activities: [400, 1500] } },
+  manali: { airport: "KUU", altitude: 2050, costs: { food: [350, 900], local: [300, 800], activities: [500, 2500] } },
+  shimla: { airport: "SLV", altitude: 2200, costs: { food: [350, 900], local: [200, 600], activities: [300, 1000] } },
+  mussoorie: { airport: "DED", altitude: 2000, costs: { food: [350, 900], local: [200, 500], activities: [300, 900] } },
+  nainital: { airport: "DED", altitude: 2084, costs: { food: [350, 900], local: [200, 500], activities: [300, 900] } },
+  darjeeling: { airport: "IXB", altitude: 2042, costs: { food: [300, 800], local: [250, 600], activities: [300, 1000] } },
+  munnar: { airport: "COK", costs: { food: [350, 900], local: [300, 700], activities: [400, 1500] } },
+  ooty: { airport: "CJB", costs: { food: [300, 800], local: [250, 600], activities: [300, 900] } },
+  coorg: { airport: "IXE", costs: { food: [400, 1000], local: [300, 800], activities: [400, 1500] } },
+  kodaikanal: { airport: "IXM", costs: { food: [300, 800], local: [200, 500], activities: [300, 800] } },
+  gangtok: { airport: "IXB", altitude: 1650, costs: { food: [350, 900], local: [400, 1000], activities: [500, 1500] } },
+  leh: { airport: "IXL", altitude: 3500, costs: { food: [400, 1000], local: [500, 1200], activities: [800, 2500] } },
+  spiti: { airport: "KUU", altitude: 3800, costs: { food: [350, 800], local: [500, 1200], activities: [500, 1500] } },
+  gulmarg: { airport: "SXR", altitude: 2650, costs: { food: [500, 1200], local: [300, 800], activities: [1000, 3000] } },
+  pahalgam: { airport: "SXR", altitude: 2740, costs: { food: [400, 1000], local: [300, 800], activities: [500, 1500] } },
+  srinagar: { airport: "SXR", altitude: 1585, costs: { food: [400, 1000], local: [250, 600], activities: [400, 1500] } },
+  auli: { airport: "DED", altitude: 2800, costs: { food: [400, 900], local: [300, 700], activities: [800, 2500] } },
+  rishikesh: { airport: "DED", costs: { food: [250, 700], local: [150, 400], activities: [500, 2000] } },
+  chopta: { airport: "DED", altitude: 2680, costs: { food: [250, 600], local: [300, 700], activities: [200, 600] } },
+  "valley-of-flowers": { airport: "DED", altitude: 3600, costs: { food: [250, 600], local: [400, 900], activities: [300, 800] } },
+  varanasi: { airport: "VNS", costs: { food: [250, 700], local: [150, 400], activities: [200, 800] } },
+  ayodhya: { airport: "AYJ", costs: { food: [250, 600], local: [150, 400], activities: [100, 400] } },
+  jaipur: { airport: "JAI", costs: { food: [350, 900], local: [200, 600], activities: [400, 1200] } },
+  udaipur: { airport: "UDR", costs: { food: [400, 1000], local: [200, 600], activities: [400, 1200] } },
+  jodhpur: { airport: "JDH", costs: { food: [350, 900], local: [200, 500], activities: [400, 1200] } },
+  jaisalmer: { airport: "JSA", costs: { food: [350, 900], local: [250, 600], activities: [800, 2500] } },
+  agra: { airport: "AGR", costs: { food: [300, 800], local: [200, 500], activities: [500, 1500] } },
+  hampi: { airport: "HBX", costs: { food: [250, 700], local: [200, 500], activities: [300, 800] } },
+  khajuraho: { airport: "HJR", costs: { food: [300, 700], local: [200, 500], activities: [400, 1000] } },
+  amritsar: { airport: "ATQ", costs: { food: [250, 700], local: [150, 400], activities: [100, 500] } },
+  mysuru: { airport: "MYQ", costs: { food: [300, 800], local: [150, 450], activities: [300, 900] } },
+  sanchi: { airport: "BHO", costs: { food: [250, 600], local: [200, 500], activities: [200, 600] } },
+  bodhgaya: { airport: "GAY", costs: { food: [250, 600], local: [150, 400], activities: [100, 500] } },
+  madurai: { airport: "IXM", costs: { food: [250, 700], local: [150, 400], activities: [200, 700] } },
+  shillong: { airport: "SHL", costs: { food: [350, 900], local: [300, 800], activities: [300, 1000] } },
+  cherrapunji: { airport: "SHL", costs: { food: [300, 800], local: [400, 900], activities: [400, 1200] } },
+  kaziranga: { airport: "GAU", costs: { food: [400, 1000], local: [400, 900], activities: [1500, 3500] } },
+  "rann-of-kutch": { airport: "BHJ", costs: { food: [350, 900], local: [300, 700], activities: [500, 1500] } },
+  alleppey: { airport: "COK", costs: { food: [400, 1000], local: [200, 600], activities: [1000, 3000] } },
+  wayanad: { airport: "CCJ", costs: { food: [350, 900], local: [300, 700], activities: [400, 1200] } },
+  ranthambore: { airport: "JAI", costs: { food: [400, 1000], local: [300, 700], activities: [1500, 3500] } },
+  tawang: { airport: "GAU", altitude: 3000, costs: { food: [350, 800], local: [500, 1200], activities: [400, 1000] } },
+};
+for (const dest of DESTINATIONS) {
+  const x = EXTRA[dest.id];
+  if (x?.airport) dest.airport = x.airport;
+  if (x?.altitude) dest.altitude = x.altitude;
+  if (x?.costs) dest.costs = x.costs;
+}
+
+/** IATA codes for origin cities (live flight search). */
+export const CITY_AIRPORTS: Record<string, string> = {
+  Delhi: "DEL", Mumbai: "BOM", Bengaluru: "BLR", Chennai: "MAA", Kolkata: "CCU", Hyderabad: "HYD",
+  Pune: "PNQ", Ahmedabad: "AMD", Jaipur: "JAI", Lucknow: "LKO", Chandigarh: "IXC", Kochi: "COK",
+  Bhopal: "BHO", Indore: "IDR", Patna: "PAT", Guwahati: "GAU", Bhubaneswar: "BBI", Nagpur: "NAG",
+  Dehradun: "DED", Varanasi: "VNS",
+};
 
 export const getDestination = (id: string) => DESTINATIONS.find((x) => x.id === id);
 
