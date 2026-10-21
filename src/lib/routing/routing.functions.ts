@@ -1,11 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { haversineKm } from "@/lib/engine/estimate";
+import { haversineKm, type RouteInfo } from "@/lib/engine/estimate";
 
-export interface RouteInfo {
-  km: number; // one-way road distance
-  hours: number; // one-way driving duration
-  source: "osrm" | "unavailable" | "not-applicable";
-}
+export type { RouteInfo };
 
 interface OsrmRoute { routes?: { distance: number; duration: number }[] }
 
