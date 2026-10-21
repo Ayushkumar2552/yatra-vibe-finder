@@ -40,7 +40,7 @@ function Results({ prefs }: { prefs: NonNullable<ReturnType<typeof toPreferences
   const [sort, setSort] = useState<"match" | "budget" | "weather">("match");
   const recs = useMemo(() => recommend(DESTINATIONS, prefs, weather), [prefs, weather]);
   const list = recs.filter((r) => cat === "all" || r.dest.categories.includes(cat))
-    .sort((a, b) => sort === "budget" ? a.estimate.total - b.estimate.total : sort === "weather" ? b.suitability - a.suitability : b.match - a.match);
+    .sort((a, b) => sort === "budget" ? a.estimate.total - b.estimate.total : sort === "weather" ? (b.suitability ?? -1) - (a.suitability ?? -1) : b.match - a.match);
   if (isLoading) return <div className="flex items-center gap-2 py-20"><Loader2 className="size-5 animate-spin" /> Ranking destinations…</div>;
   const top = list.slice(0, 3), rest = list.slice(3, 24);
   return (
