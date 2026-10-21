@@ -1,20 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import type { Destination } from "@/data/destinations";
 import { fetchLiveWeather } from "./weather.functions";
-import { mockWeather, type WeatherNow } from "./mock";
+import { UNAVAILABLE_WEATHER, type WeatherNow } from "./types";
 
-/** Returns weather for each destination: live when WEATHER_API_KEY works, otherwise demo. */
-export function useWeather(dests: Destination[], month: number) {
+/**
+ * Real weather for each destination via Open-Meteo.
+ * No mock fallback: when the API fails or the date is out of forecast range,
+ * entries are source "unavailable" and the UI must label them as such.
+ * Cached 12 minutes per point set + date.
+ */
+export function useWeather(dests: Destination[], date?: string) {
   const q = useQuery({
-    queryKey: ["weather", dests.map((d) => d.id).join(",")],
-    queryFn: () => fetchLiveWeather({ data: { points: dests.map((d) => ({ id: d.id, lat: d.lat, lon: d.lon })) } }),
-    staleTime: 10 * 60 * 1000,
-    retry: 0,
+    queryKey: ["weather", dests.map((d) => d.id).join(","), date ?? "now"],
+    queryFn: () => fetchLiveWeather({ data: { points: dests.map((d) => ({ id: d.id, lat: d.lat, lon: d.lon })), date } }),
+    staleTime: 12 * 60 * 1000,
+    retry: 1,
   });
   const map: Record<string, WeatherNow> = {};
-  for (const d of dests) {
-    const live = q.data?.results[d.id];
-    map[d.id] = live ? { ...live, source: "live" } : mockWeather(d, month);
-  }
-  return { weather: map, isLive: !!q.data?.live, isLoading: q.isLoading, isError: q.isError };
+  for (const d of dests) map[d.id] = q.data?.results[d.id] ?? { ...UNAVAILABLE_WEATHER };
+  const anyLive = !!q.data?.live;
+  return { weather: map, isLive: anyLive, isLoading: q.isLoading, isError: q.isError };
 }

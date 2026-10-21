@@ -1,12 +1,11 @@
 import type { Destination, Zone } from "@/data/destinations";
+import type { WeatherNow } from "./types";
 
-export interface WeatherNow {
-  temp: number;
-  feelsLike: number;
-  condition: string; // Clear, Rain, Snow, Clouds, Haze...
-  humidity: number;
-  source: "live" | "demo";
-}
+/**
+ * TEST-ONLY deterministic weather model. Used by unit tests so engine behaviour
+ * can be verified without network access. Never imported by production UI —
+ * the app shows "unavailable" instead of invented weather.
+ */
 
 /** Typical monthly mean temperatures (°C, Jan..Dec) per climate zone — demo model. */
 const ZONE_TEMPS: Record<Zone, number[]> = {
@@ -22,18 +21,21 @@ const RAIN: Record<Zone, number[]> = {
   coastal: [6, 7, 8, 9], hill: [7, 8], southhill: [6, 7, 8], alpine: [], plains: [7, 8], desert: [], northeast: [5, 6, 7, 8, 9],
 };
 
-/** Deterministic demo weather for a destination in a given month (1-12). Never presented as live. */
+/** Deterministic demo weather for a destination in a given month (1-12). Tests only. */
 export function mockWeather(dest: Destination, month: number): WeatherNow {
   const base = ZONE_TEMPS[dest.zone][month - 1];
-  // small deterministic per-destination offset so cards don't look identical
   const offset = ((dest.id.length * 7) % 5) - 2;
   const temp = base + offset * 0.6;
   let condition = "Clear";
   if (RAIN[dest.zone].includes(month)) condition = "Rain";
   else if (temp <= 0) condition = "Snow";
-  else if (dest.zone === "plains" && [12, 1].includes(month)) condition = "Haze";
+  else if (dest.zone === "plains" && [12, 1].includes(month)) condition = "Fog";
   else if (dest.zone === "northeast" || dest.zone === "southhill") condition = "Clouds";
   const humidity = dest.zone === "coastal" ? 75 : dest.zone === "desert" ? 25 : 55;
   const feelsLike = temp + (humidity > 70 && temp > 25 ? 3 : temp < 5 ? -3 : 0);
-  return { temp: Math.round(temp), feelsLike: Math.round(feelsLike), condition, humidity, source: "demo" };
+  return {
+    temp: Math.round(temp), feelsLike: Math.round(feelsLike), condition, humidity,
+    precipitation: condition === "Rain" ? 8 : 0, wind: 10,
+    updatedAt: "test", source: "live",
+  };
 }
