@@ -16,17 +16,35 @@ export function WeatherIcon({ c, className }: { c: string; className?: string })
   return <I className={className} />;
 }
 
-export function WeatherChip({ w, suit, onMedia }: { w: WeatherNow; suit?: number; onMedia?: boolean }) {
+export function WeatherChip({ w, suit, onMedia }: { w: WeatherNow; suit?: number | null; onMedia?: boolean }) {
+  if (w.source === "unavailable") {
+    return (
+      <span className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold", onMedia ? "glass" : "bg-muted")}>
+        <Cloud className="size-3.5" /> Weather unavailable
+      </span>
+    );
+  }
   return (
     <span className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold", onMedia ? "glass" : "bg-muted")}>
       <WeatherIcon c={w.condition} className="size-3.5" />
       {w.temp}°C · feels {w.feelsLike}°
-      <span className={cn("rounded-full px-1.5 text-[10px] uppercase tracking-wide", w.source === "live" ? "bg-success text-on-media" : "bg-warning text-foreground")}>
-        {w.source === "live" ? "Live" : "Demo"}
+      <span className={cn("rounded-full px-1.5 text-[10px] uppercase tracking-wide", w.source === "live" ? "bg-success text-on-media" : "bg-accent text-accent-foreground")}>
+        {w.source === "live" ? "Live" : "Forecast"}
       </span>
-      {suit !== undefined && <span className="opacity-80">· {suit}% suitable</span>}
+      {suit !== undefined && suit !== null && <span className="opacity-80">· {suit}% suitable</span>}
     </span>
   );
+}
+
+/** "5 hr 15 min" from decimal hours. */
+export const fmtHours = (h: number) => `${Math.floor(h)} hr ${Math.round((h % 1) * 60)} min`;
+
+/** "Open-Meteo · Live · updated 6 min ago" style source label. */
+export function weatherSourceLabel(w: WeatherNow) {
+  if (w.source === "unavailable") return "Weather currently unavailable";
+  const mins = w.updatedAt ? Math.max(0, Math.round((Date.now() - Date.parse(w.updatedAt)) / 60000)) : null;
+  const ago = mins === null ? "" : mins < 1 ? " · updated just now" : mins < 90 ? ` · updated ${mins} min ago` : ` · updated ${Math.round(mins / 60)} hr ago`;
+  return `Open-Meteo · ${w.source === "live" ? "Live" : "Forecast"}${ago}`;
 }
 
 export function SaveButton({ id, onMedia }: { id: string; onMedia?: boolean }) {
@@ -60,12 +78,20 @@ export function ExplainPanel({ r }: { r: Recommendation }) {
       {open && (
         <div className="space-y-4 px-4 pb-4 text-xs">
           <div className="space-y-2">
-            {(Object.keys(WEIGHTS) as Factor[]).map((k) => (
-              <div key={k}>
-                <div className="flex justify-between"><span>{FACTOR_LABEL[k]} <span className="text-muted-foreground">(w={WEIGHTS[k]})</span></span><span className="font-mono">{Math.round(r.factors[k] * 100)}%</span></div>
-                <div className="mt-1 h-1.5 rounded-full bg-muted"><div className="h-full rounded-full bg-accent" style={{ width: `${r.factors[k] * 100}%` }} /></div>
-              </div>
-            ))}
+            {(Object.keys(WEIGHTS) as Factor[]).map((k) => {
+              const f = r.factors[k];
+              return (
+                <div key={k}>
+                  <div className="flex justify-between">
+                    <span>{FACTOR_LABEL[k]} <span className="text-muted-foreground">(w={WEIGHTS[k]})</span></span>
+                    {f === null
+                      ? <span className="text-muted-foreground">no live data — weight redistributed</span>
+                      : <span className="font-mono">{Math.round(f * 100)}% × {WEIGHTS[k]} = {(f * WEIGHTS[k] * 100).toFixed(1)} pts</span>}
+                  </div>
+                  <div className="mt-1 h-1.5 rounded-full bg-muted"><div className="h-full rounded-full bg-accent" style={{ width: `${(f ?? 0) * 100}%` }} /></div>
+                </div>
+              );
+            })}
           </div>
           <div>
             <p className="mb-1.5 font-semibold">Rules fired (forward chaining)</p>
@@ -105,7 +131,7 @@ export function RecommendationCard({ r, featured, rank }: { r: Recommendation; f
           <div className="rounded-2xl bg-muted p-3">
             <p className="text-xs text-muted-foreground">Estimated total</p>
             <p className="font-display text-lg font-bold">{inr(r.estimate.total)}</p>
-            <p className="text-[11px] capitalize text-muted-foreground">{r.estimate.tier} tier · {r.estimate.mode}</p>
+            <p className="text-[11px] capitalize text-muted-foreground">{r.estimate.tier} tier · {r.estimate.mode} · cost confidence: {r.budgetConfidence}</p>
           </div>
           <div className="rounded-2xl bg-muted p-3">
             <p className="flex items-center gap-1 text-xs text-muted-foreground"><CalendarDays className="size-3" /> Best time</p>
@@ -113,6 +139,13 @@ export function RecommendationCard({ r, featured, rank }: { r: Recommendation; f
             <p className="text-[11px] text-muted-foreground">Suggested {d.days[0]}–{d.days[1]} days</p>
           </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          {r.estimate.intercitySource === "not-applicable"
+            ? "Road route not applicable — flight/ferry required. Intercity cost is an estimated airfare."
+            : r.estimate.intercitySource === "route"
+              ? `Road distance: ${r.estimate.km} km · approx drive ${fmtHours(r.estimate.hours)} · OSRM live route`
+              : `Approx distance: ${r.estimate.km} km · ~${fmtHours(r.estimate.hours)} · estimated (route unavailable)`}
+        </p>
         <div>
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Why this fits you</p>
           <ul className="mt-2 space-y-1 text-sm">{r.reasons.slice(0, featured ? 4 : 3).map((x) => <li key={x}>• {x}</li>)}</ul>
