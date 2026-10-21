@@ -29,7 +29,7 @@ function Detail() {
   const [travelers, setT] = useState(2);
   const [days, setDays] = useState(d.days[1]);
   const [tier, setTier] = useState<Tier>("mid");
-  const { weather } = useWeather([d], new Date().getMonth() + 1);
+  const { weather } = useWeather([d]);
   const w = weather[d.id];
   const city = ORIGIN_CITIES.find((c) => c.name === from) ?? ORIGIN_CITIES[0];
   if (!city) return null;

@@ -35,7 +35,7 @@ function Planner() {
 }
 
 function Results({ prefs }: { prefs: NonNullable<ReturnType<typeof toPreferences>> }) {
-  const { weather, isLive, isLoading } = useWeather(DESTINATIONS, prefs.month);
+  const { weather, isLive, isLoading } = useWeather(DESTINATIONS);
   const [cat, setCat] = useState<Category | "all">("all");
   const [sort, setSort] = useState<"match" | "budget" | "weather">("match");
   const recs = useMemo(() => recommend(DESTINATIONS, prefs, weather), [prefs, weather]);

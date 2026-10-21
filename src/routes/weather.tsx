@@ -14,7 +14,7 @@ export const Route = createFileRoute("/weather")({
 });
 
 function WeatherPage() {
-  const { weather, isLive, isLoading } = useWeather(DESTINATIONS, new Date().getMonth() + 1);
+  const { weather, isLive, isLoading } = useWeather(DESTINATIONS);
   const ranked = [...DESTINATIONS].sort((a, b) => weatherSuitability(weather[b.id]) - weatherSuitability(weather[a.id]));
   return (
     <div className="mx-auto max-w-[1400px] px-5 pt-28 md:px-8">

@@ -9,7 +9,7 @@
  * Step 3  FINAL: match% = clamp(base×100 + Σ adjustments, 5, 99), then sort.
  */
 import type { Category, Destination } from "@/data/destinations";
-import type { WeatherNow } from "@/lib/weather/mock";
+import type { WeatherNow } from "@/lib/weather/types";
 import { bestFit, type Breakdown, type Transport } from "./estimate";
 
 export type Climate = "any" | "cool" | "mild" | "warm" | "snow";

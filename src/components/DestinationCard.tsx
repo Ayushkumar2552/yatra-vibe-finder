@@ -6,7 +6,7 @@ import { destImage } from "@/lib/images";
 import { useSaved } from "@/lib/saved";
 import { inr } from "@/lib/engine/estimate";
 import { FACTOR_LABEL, WEIGHTS, type Factor, type Recommendation } from "@/lib/engine/recommend";
-import type { WeatherNow } from "@/lib/weather/mock";
+import type { WeatherNow } from "@/lib/weather/types";
 import { MONTHS } from "@/lib/planner-params";
 import { cn } from "@/lib/utils";
 import { DestinationGallery } from "@/components/DestinationGallery";
