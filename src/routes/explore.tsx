@@ -16,7 +16,7 @@ export const Route = createFileRoute("/explore")({
 function Explore() {
   const { category } = Route.useSearch();
   const list = DESTINATIONS.filter((d) => !category || d.categories.includes(category));
-  const { weather } = useWeather(list, new Date().getMonth() + 1);
+  const { weather } = useWeather(list);
   return (
     <div className="mx-auto max-w-[1400px] px-5 pt-28 md:px-8">
       <h1 className="text-5xl font-bold">{category ? CATEGORY_META[category].label : "Explore India"}</h1>
