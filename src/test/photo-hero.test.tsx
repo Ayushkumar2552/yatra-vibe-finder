@@ -1,0 +1,5 @@
+import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
+import {afterEach,expect,it,vi} from 'vitest';
+import {PhotoStories} from '@/components/PhotoStories';
+afterEach(()=>{cleanup();vi.useRealTimers();});
+it('cycles all three hero images every eight seconds and can pause',()=>{vi.useFakeTimers();const {container}=render(<PhotoStories/>);const active=()=>container.querySelector('[data-active="true"] img')?.getAttribute('src');expect(active()).toContain('selfie-friends');act(()=>vi.advanceTimersByTime(8000));expect(active()).toContain('mountain-friends');act(()=>vi.advanceTimersByTime(8000));expect(active()).toContain('timeless-memories');act(()=>vi.advanceTimersByTime(8000));expect(active()).toContain('selfie-friends');fireEvent.click(screen.getByRole('button',{name:'Pause slideshow'}));act(()=>vi.advanceTimersByTime(8000));expect(active()).toContain('selfie-friends');fireEvent.click(screen.getByRole('button',{name:'Show photo 3'}));expect(active()).toContain('timeless-memories');});

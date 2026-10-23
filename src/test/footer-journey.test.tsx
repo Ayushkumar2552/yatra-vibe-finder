@@ -1,0 +1,9 @@
+import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
+import {FooterJourney} from '@/components/FooterJourney';
+vi.mock('@tanstack/react-router',()=>({Link:({children,to,...props}:any)=><a href={to} {...props}>{children}</a>}));
+let observe:(entries:any[])=>void;
+beforeEach(()=>{vi.useFakeTimers();vi.spyOn(HTMLMediaElement.prototype,'play').mockResolvedValue();vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});vi.stubGlobal('IntersectionObserver',class{constructor(callback:any){observe=callback;}observe(){}disconnect(){}});});
+afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();vi.useRealTimers();});
+it('plays only in view, cycles after eight seconds and pauses',async()=>{render(<FooterJourney/>);expect(HTMLMediaElement.prototype.play).not.toHaveBeenCalled();await act(async()=>observe([{isIntersecting:true}]));expect(HTMLMediaElement.prototype.play).toHaveBeenCalled();await act(async()=>vi.advanceTimersByTime(8000));expect(screen.getByRole('button',{name:'Show coast video'})).toHaveAttribute('aria-pressed','true');fireEvent.click(screen.getByRole('button',{name:'Pause travel videos'}));act(()=>vi.advanceTimersByTime(16000));expect(screen.getByRole('button',{name:'Show coast video'})).toHaveAttribute('aria-pressed','true');});
+it('supports manual scenes and stops cycling off-screen',async()=>{render(<FooterJourney/>);await act(async()=>observe([{isIntersecting:true}]));fireEvent.click(screen.getByRole('button',{name:'Show sunset video'}));await act(async()=>observe([{isIntersecting:false}]));act(()=>vi.advanceTimersByTime(16000));expect(screen.getByRole('button',{name:'Show sunset video'})).toHaveAttribute('aria-pressed','true');expect(screen.getByRole('link',{name:'Explore more'})).toHaveAttribute('href','/explore');});

@@ -12,7 +12,8 @@ export function buildItinerary(d: Destination, days: number): DayPlan[] {
   let i = 0;
   const next = () => acts[i++ % acts.length];
   for (let day = 1; day <= days; day++) {
-    if (day === 1) plan.push({ day, title: "Arrive & settle in", items: ["Check in and rest", next(), `Dinner near ${d.highlights[0]}`] });
+    if (days === 1) plan.push({ day, title: "A short visit", items: ["Arrive and allow for travel time", next(), "Return home; check that travel fits your day"] });
+    else if (day === 1) plan.push({ day, title: "Arrive & settle in", items: ["Check in and rest", next(), `Dinner near ${d.highlights[0]}`] });
     else if (day === days && days > 1) plan.push({ day, title: "Slow morning & depart", items: [`Last look at ${d.highlights[d.highlights.length - 1]}`, "Local souvenir shopping", "Head home"] });
     else plan.push({ day, title: day === 2 ? "Signature experiences" : "Explore deeper", items: [`Morning: ${next()}`, `Afternoon: ${next()}`, "Evening: free time / local food"] });
   }

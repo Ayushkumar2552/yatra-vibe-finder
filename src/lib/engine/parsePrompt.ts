@@ -14,15 +14,16 @@ export function parsePrompt(text: string) {
   ];
   const vibes = map.filter(([r]) => r.test(t)).map(([, c]) => c);
   if (vibes.length) out.vibes = [...new Set(vibes)].join(",");
-  const b = t.match(/₹?\s?(\d+(?:\.\d+)?)\s?(k|000|l|lakh)?/);
-  const bm = t.match(/(?:under|below|budget|₹)\s*₹?\s?(\d+(?:\.\d+)?)\s?(k|l|lakh)?/);
-  const m = bm ?? (b && b[2] ? b : null);
+  const amount = '(\\d[\\d,]*(?:\\.\\d+)?)\\s*(lakh|lac|k|l)?\\b';
+  const explicit = t.match(new RegExp('(?:under|below|budget(?: of)?|₹|rs\\.?|inr)\\s*₹?\\s*' + amount));
+  const scaled = t.match(/\b(\d+(?:\.\d+)?)\s*(lakh|lac|k)\b/);
+  const m = explicit ?? scaled;
   if (m) {
-    const n = parseFloat(m[1]);
-    out.budget = m[2] === "k" ? n * 1000 : m[2] === "l" || m[2] === "lakh" ? n * 100000 : n < 1000 ? n * 1000 : n;
+    const n = Number(m[1].replaceAll(',', ''));
+    out.budget = n * (m[2] === 'k' ? 1000 : ['l', 'lac', 'lakh'].includes(m[2]) ? 100000 : 1);
   }
   const dm = t.match(/(\d+)\s?-?\s?(day|night)/);
-  if (dm) out.days = parseInt(dm[1]);
+  if (dm) out.days = parseInt(dm[1]) + (dm[2] === "night" ? 1 : 0);
   else if (/weekend/.test(t)) out.days = 2;
   else if (/week/.test(t)) out.days = 7;
   const city = ORIGIN_CITIES.find((c) => t.includes(c.name.toLowerCase()));

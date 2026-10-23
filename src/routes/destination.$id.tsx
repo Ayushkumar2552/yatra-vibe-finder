@@ -9,6 +9,8 @@ import { DestinationGallery } from "@/components/DestinationGallery";
 import { MONTHS } from "@/lib/planner-params";
 import { useWeather } from "@/lib/weather/useWeather";
 
+import { TripPreparation } from "@/components/TripPreparation";
+
 export const Route = createFileRoute("/destination/$id")({
   loader: ({ params }) => { const d = getDestination(params.id); if (!d) throw notFound(); return d; },
   head: ({ loaderData }) => ({ meta: [
@@ -34,7 +36,7 @@ function Detail() {
   const city = ORIGIN_CITIES.find((c) => c.name === from) ?? ORIGIN_CITIES[0];
   if (!city) return null;
   const e = estimate(d, city, travelers, days, "any", tier);
-  const rows = [["Stay", e.stay], ["Food", e.food], ["Local transport", e.local], ["Activities", e.activities], [`Intercity (${e.mode}, ~${e.km} km round-trip ×2)`, e.intercity]] as const;
+  const rows = [["Stay", e.stay], ["Food", e.food], ["Local transport", e.local], ["Activities", e.activities], [`Intercity (${e.mode}, ~${e.km} km one-way ×2)`, e.intercity]] as const;
   const inp = "rounded-full border bg-card px-4 py-2 text-sm";
   return (
     <div>
@@ -49,9 +51,10 @@ function Detail() {
       </section>
       <div className="mx-auto grid max-w-[1400px] gap-10 px-5 py-12 md:px-8 lg:grid-cols-[1fr_420px]">
         <div className="space-y-10">
+          <TripPreparation key={d.id} destination={d} />
           <div><h2 className="text-3xl font-bold">Highlights</h2><ul className="mt-3 flex flex-wrap gap-2">{d.highlights.map((h) => <li key={h} className="rounded-full bg-secondary px-4 py-2 text-sm">{h}</li>)}</ul>
             <p className="mt-4 text-sm text-muted-foreground">Best months: {d.bestMonths.map((m) => MONTHS[m - 1]).join(", ")} · Suggested {d.days[0]}–{d.days[1]} days</p></div>
-          <div><h2 className="text-3xl font-bold">Day-wise itinerary</h2>
+          <div><h2 className="text-3xl font-bold">Suggested itinerary</h2><p className="mt-2 text-sm text-muted-foreground">Activity ideas, not a timed route. Check travel times, opening hours, permits and availability before booking.</p>
             <ol className="mt-4 space-y-3">{buildItinerary(d, days).map((p) => (
               <li key={p.day} className="rounded-3xl border bg-card p-5"><p className="text-xs font-semibold uppercase text-accent">Day {p.day}</p><p className="font-display text-lg font-bold">{p.title}</p>
                 <ul className="mt-2 space-y-1 text-sm text-muted-foreground">{p.items.map((x) => <li key={x}>• {x}</li>)}</ul></li>))}</ol></div>

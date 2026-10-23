@@ -14,6 +14,10 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteNav, SiteFooter } from "../components/SiteNav";
 
+import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from "@/components/AuthProvider";
+import { TripReminders } from "@/components/TripReminders";
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -121,9 +125,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <SiteNav />
+      <AuthProvider><Toaster /><TripReminders><SiteNav />
       <main><Outlet /></main>
-      <SiteFooter />
+      <SiteFooter /></TripReminders></AuthProvider>
     </QueryClientProvider>
   );
 }

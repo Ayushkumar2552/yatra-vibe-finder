@@ -3,10 +3,11 @@ import { GALLERY_INTERVAL_MS, galleryCanAutoplay, nextGalleryIndex } from "@/lib
 import { DESTINATIONS } from "@/data/destinations";
 
 describe("Destination gallery rules", () => {
-  it("gives every destination 3–5 unique attraction images without reusing other destinations' photos", () => {
+  it("uses only available destination-specific galleries without broken legacy hosting paths", () => {
     const all: string[] = [];
     for (const destination of DESTINATIONS) {
-      expect(destination.images.length).toBeGreaterThanOrEqual(3);
+      expect(destination.images.length).toBeGreaterThanOrEqual(1);
+      expect(destination.images.every(url => !url.startsWith("/__l5e/"))).toBe(true);
       expect(destination.images.length).toBeLessThanOrEqual(5);
       expect(destination.imageLabels.length).toBe(destination.images.length);
       expect(new Set(destination.images).size).toBe(destination.images.length);

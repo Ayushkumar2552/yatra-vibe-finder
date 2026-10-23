@@ -50,10 +50,13 @@ const d = (
   highlights: string[], activities: string[],
 ): Destination => {
   const main = DESTINATION_IMAGES[id];
-  const assets = GALLERY_ASSETS[id] ?? [];
+  // Legacy Lovable pointers are preserved, but are not served by this host.
+  const assets = (GALLERY_ASSETS[id] ?? []).filter(url => !url.startsWith("/__l5e/"));
   const extra = COMMONS_EXTRA[id] ?? [];
-  const images = [main, ...assets, ...extra.map((x) => x.url)].filter(Boolean);
-  const imageLabels = [name, ...assets.map(() => name), ...extra.map((x) => x.label)];
+  const media = [{ url: main, label: name }, ...assets.map(url => ({url, label: name})), ...extra]
+    .filter((entry, index, all) => entry.url && all.findIndex(other => other.url === entry.url) === index).slice(0, 5);
+  const images = media.map(entry => entry.url);
+  const imageLabels = media.map(entry => entry.label);
   return { image: main, images, imageLabels, costs: defaultCosts(daily), id, name, state, zone, categories, bestMonths, daily: { budget: daily[0], mid: daily[1], luxury: daily[2] }, days, lat, lon, highlights, activities };
 };
 

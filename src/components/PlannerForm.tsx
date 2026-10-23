@@ -2,11 +2,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { LocateFixed, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { CATEGORY_META, ORIGIN_CITIES, type Category } from "@/data/destinations";
-import { MONTHS, type PlannerSearch } from "@/lib/planner-params";
+import { MONTHS, toPreferences, type PlannerSearch } from "@/lib/planner-params";
 
 export function PlannerForm({ initial }: { initial: PlannerSearch }) {
   const nav = useNavigate();
-  const [s, setS] = useState<PlannerSearch>({ budget: 30000, travelers: 2, days: 4, climate: "any", transport: "any", group: "couple", month: new Date().getMonth() + 1, ...initial });
+  const [s, setS] = useState<PlannerSearch>({ live: true, budget: 30000, travelers: 2, days: 4, climate: "any", transport: "any", group: "couple", month: new Date().getMonth() + 1, ...initial });
   const [geo, setGeo] = useState<string>("");
   const vibes = (s.vibes ?? "").split(",").filter(Boolean);
   const set = (p: Partial<PlannerSearch>) => setS((x) => ({ ...x, ...p }));
@@ -23,7 +23,10 @@ export function PlannerForm({ initial }: { initial: PlannerSearch }) {
   const label = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground";
   return (
     <form className="grid gap-6 rounded-[32px] border bg-card p-6 shadow-soft md:p-8"
-      onSubmit={(e) => { e.preventDefault(); if (!s.from) return setGeo("Choose a start city or use your location."); nav({ to: "/planner", search: { ...s, run: true } }); }}>
+      onSubmit={(e) => { e.preventDefault(); if (!s.from) return setGeo("Choose a start city or use your location."); if (!toPreferences(s, new Date().getMonth() + 1)) return setGeo("Enter a valid budget, traveller count, trip length and start location.");
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        if (s.travelDate && new Date(s.travelDate + "T00:00") < today) return setGeo("Choose today or a future departure date.");
+        nav({ to: "/planner", search: { ...s, run: true } }); }}>
       <div className="grid gap-4 md:grid-cols-3">
         <div className="md:col-span-1">
           <span className={label}>Starting from</span>
@@ -38,7 +41,8 @@ export function PlannerForm({ initial }: { initial: PlannerSearch }) {
         </div>
         <label><span className={label}>Total budget (₹)</span><input type="number" min={2000} step={1000} className={field} value={s.budget} onChange={(e) => set({ budget: +e.target.value })} /></label>
         <label><span className={label}>Travel month</span>
-          <select className={field} value={s.month} onChange={(e) => set({ month: +e.target.value })}>{MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}</select></label>
+          <select className={field} disabled={!!s.travelDate} value={s.travelDate ? Number(s.travelDate.slice(5, 7)) : s.month} onChange={(e) => set({ month: +e.target.value })}>{MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}</select></label>
+        <label><span className={label}>Departure date (optional)</span><input type="date" className={field} value={s.travelDate ?? ""} onChange={e => set({ travelDate: e.target.value || undefined })} /><span className="text-xs text-muted-foreground">Adds a departure-day forecast when available; otherwise we use seasonal guidance.</span></label>
         <label><span className={label}>Travellers</span><input type="number" min={1} max={20} className={field} value={s.travelers} onChange={(e) => set({ travelers: +e.target.value })} /></label>
         <label><span className={label}>Days</span><input type="number" min={1} max={21} className={field} value={s.days} onChange={(e) => set({ days: +e.target.value })} /></label>
         <label><span className={label}>Group</span>
@@ -51,7 +55,7 @@ export function PlannerForm({ initial }: { initial: PlannerSearch }) {
           <select className={field} value={s.transport} onChange={(e) => set({ transport: e.target.value as PlannerSearch["transport"] })}>
             <option value="any">Best option</option><option value="train">Train</option><option value="bus">Bus</option><option value="car">Car</option><option value="flight">Flight</option></select></label>
         <label className="flex items-center gap-3 self-end rounded-2xl border px-4 py-3 text-sm">
-          <input type="checkbox" checked={!!s.live} onChange={(e) => set({ live: e.target.checked || undefined })} /> Use current weather
+          <input type="checkbox" checked={!!s.live} onChange={(e) => set({ live: e.target.checked || undefined })} /> Include applicable weather
         </label>
       </div>
       <div>

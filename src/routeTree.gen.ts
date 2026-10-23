@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as PhotoSpotsRouteImport } from './routes/photo-spots'
 import { Route as PlannerRouteImport } from './routes/planner'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as WeatherRouteImport } from './routes/weather'
@@ -27,9 +29,19 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PhotoSpotsRoute = PhotoSpotsRouteImport.update({
+  id: '/photo-spots',
+  path: '/photo-spots',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlannerRoute = PlannerRouteImport.update({
@@ -56,7 +68,9 @@ const DestinationIdRoute = DestinationIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/explore': typeof ExploreRoute
+  '/photo-spots': typeof PhotoSpotsRoute
   '/planner': typeof PlannerRoute
   '/saved': typeof SavedRoute
   '/weather': typeof WeatherRoute
@@ -65,7 +79,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/explore': typeof ExploreRoute
+  '/photo-spots': typeof PhotoSpotsRoute
   '/planner': typeof PlannerRoute
   '/saved': typeof SavedRoute
   '/weather': typeof WeatherRoute
@@ -75,7 +91,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/explore': typeof ExploreRoute
+  '/photo-spots': typeof PhotoSpotsRoute
   '/planner': typeof PlannerRoute
   '/saved': typeof SavedRoute
   '/weather': typeof WeatherRoute
@@ -86,7 +104,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/account'
     | '/explore'
+    | '/photo-spots'
     | '/planner'
     | '/saved'
     | '/weather'
@@ -95,7 +115,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/account'
     | '/explore'
+    | '/photo-spots'
     | '/planner'
     | '/saved'
     | '/weather'
@@ -104,7 +126,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/account'
     | '/explore'
+    | '/photo-spots'
     | '/planner'
     | '/saved'
     | '/weather'
@@ -114,7 +138,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AccountRoute: typeof AccountRoute
   ExploreRoute: typeof ExploreRoute
+  PhotoSpotsRoute: typeof PhotoSpotsRoute
   PlannerRoute: typeof PlannerRoute
   SavedRoute: typeof SavedRoute
   WeatherRoute: typeof WeatherRoute
@@ -137,11 +163,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore': {
       id: '/explore'
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/photo-spots': {
+      id: '/photo-spots'
+      path: '/photo-spots'
+      fullPath: '/photo-spots'
+      preLoaderRoute: typeof PhotoSpotsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/planner': {
@@ -178,7 +218,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AccountRoute: AccountRoute,
   ExploreRoute: ExploreRoute,
+  PhotoSpotsRoute: PhotoSpotsRoute,
   PlannerRoute: PlannerRoute,
   SavedRoute: SavedRoute,
   WeatherRoute: WeatherRoute,

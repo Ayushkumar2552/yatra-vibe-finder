@@ -18,14 +18,14 @@ function About() {
       <div className="rounded-[28px] border bg-card p-6"><h2 className="text-2xl font-bold">1. Weighted factors</h2>
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">{(Object.keys(WEIGHTS) as Factor[]).map((k) => <li key={k} className="flex justify-between rounded-2xl bg-muted px-4 py-2 text-sm"><span>{FACTOR_LABEL[k]}</span><b>{WEIGHTS[k] * 100}%</b></li>)}</ul></div>
       <div className="rounded-[28px] border bg-card p-6"><h2 className="text-2xl font-bold">2. Rule base</h2>
-        <ul className="mt-3 space-y-1 font-mono text-xs">{RULES.map((r) => <li key={r.id}>{r.id}: {r.text}</li>)}</ul>
-        <p className="mt-3 text-sm text-muted-foreground">match% = clamp(base × 100 + Σ rule effects, 5, 99)</p></div>
-      <div className="rounded-[28px] border bg-card p-6 text-sm"><h2 className="text-2xl font-bold">Developer notes</h2>
+        <ul className="mt-3 space-y-1 font-mono text-xs">{RULES.map((r) => <li key={r.id}>{r.id}: {r.text.replace(/\s*\((?:[+−-]\d+|info)\)/g, "")}</li>)}</ul>
+        <p className="mt-3 text-sm text-muted-foreground">Fit score = weighted average of applicable factors × 100. Unavailable or unselected factors are excluded and remaining weights are normalised. Context rules do not add duplicate bonuses. Options that fail basic constraints are shown only as alternatives.</p></div>
+      <div className="rounded-[28px] border bg-card p-6 text-sm"><h2 className="text-2xl font-bold">What to know before booking</h2>
         <ul className="mt-3 list-disc space-y-1 pl-5">
-          <li>Destination data: <code>src/data/destinations.ts</code></li>
-          <li>Scoring + rules: <code>src/lib/engine/recommend.ts</code>; budget: <code>estimate.ts</code>; itinerary: <code>itinerary.ts</code></li>
-          <li>Live weather: add secret <code>WEATHER_API_KEY</code> (OpenWeatherMap). Without it, weather is labelled Demo.</li>
-          <li>Hero videos: put <code>beach.mp4</code>, <code>roadtrip.mp4</code>, <code>desert.mp4</code> in <code>public/videos/</code>.</li>
+          <li>Destination descriptions and best months are general planning guidance, not live checks of access or availability.</li>
+          <li>Costs are estimates, not booking quotes. Itineraries are activity suggestions and do not verify opening hours, permits or connections.</li>
+          <li>Weather comes from Open-Meteo with a browser request and server fallback. Only applicable current conditions or departure-day forecasts are scored; unavailable readings are excluded.</li>
+          <li>Photo spots are ranked by mapped place type and distance. Check access and photography rules at the location.</li>
         </ul></div>
     </div>
   );

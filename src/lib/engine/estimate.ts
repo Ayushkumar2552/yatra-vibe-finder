@@ -59,9 +59,10 @@ export function estimate(dest: Destination, o: { lat: number; lon: number }, tra
   const island = isIsland(dest);
   const heuristicKm = travelKm(o, dest);
   const mode = effectiveTransport(transport, route?.source === "osrm" ? route.km : heuristicKm, dest);
-  const km = route?.source === "osrm" ? route.km : heuristicKm;
-  const hours = route?.source === "osrm" ? route.hours : travelHours(km, mode);
-  const intercitySource: Breakdown["intercitySource"] = island ? "not-applicable" : route?.source === "osrm" ? "route" : "estimate";
+  const usesRoad = route?.source === "osrm" && (mode === "car" || mode === "bus");
+  const km = usesRoad ? route!.km : mode === "flight" ? Math.round(haversineKm(o, dest)) : heuristicKm;
+  const hours = usesRoad ? route!.hours : travelHours(km, mode);
+  const intercitySource: Breakdown["intercitySource"] = island ? "not-applicable" : usesRoad ? "route" : "estimate";
 
   const food = Math.round(mid(dest.costs.food) * travelers * days);
   const local = Math.round(mid(dest.costs.local) * travelers * days);
@@ -77,9 +78,9 @@ export function estimate(dest: Destination, o: { lat: number; lon: number }, tra
 
 /** Picks the most comfortable tier that fits the budget (or "budget" if none fit). */
 export function bestFit(dest: Destination, o: { lat: number; lon: number }, travelers: number, days: number, transport: Transport, budget: number, route?: RouteInfo) {
-  for (const t of ["luxury", "mid"] as Tier[]) {
+  for (const t of ["mid"] as Tier[]) {
     const e = estimate(dest, o, travelers, days, transport, t, route);
-    if (e.total <= budget) return e;
+    if (e.total * 1.15 <= budget) return e;
   }
   return estimate(dest, o, travelers, days, transport, "budget", route);
 }

@@ -14,12 +14,13 @@ export const Route = createFileRoute("/weather")({
 });
 
 function WeatherPage() {
-  const { weather, isLive, isLoading } = useWeather(DESTINATIONS);
+  const { weather, isLive, isLoading, refetch, isFetching } = useWeather(DESTINATIONS);
   const ranked = [...DESTINATIONS].sort((a, b) => weatherSuitability(weather[b.id]) - weatherSuitability(weather[a.id]));
   return (
     <div className="mx-auto max-w-[1400px] px-5 pt-28 md:px-8">
       <h1 className="text-5xl font-bold">Where the weather is kind.</h1>
-      <p className="mt-3 text-muted-foreground">{isLoading ? "Checking weather…" : isLive ? "Live conditions from the weather provider." : "Demo/Estimated weather — add a weather API key for live data."}</p>
+      <p className="mt-3 text-muted-foreground">{isLoading ? "Checking weather…" : isLive ? "Live conditions from the weather provider." : "Weather unavailable right now. Please try again shortly."}</p>
+      <button className="mt-4 rounded-full border px-4 py-2 text-sm" disabled={isFetching} onClick={() => void refetch()}>{isFetching ? "Refreshing…" : "Refresh weather"}</button>
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{ranked.slice(0, 16).map((d) => <SimpleCard key={d.id} d={d} w={weather[d.id]} />)}</div>
     </div>
   );

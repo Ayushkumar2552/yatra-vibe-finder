@@ -6,6 +6,7 @@
  */
 export interface WeatherNow {
   temp: number;
+  lowTemp?: number; // Forecast minimum when available.
   feelsLike: number;
   condition: string; // Clear, Rain, Snow, Clouds, Fog, Drizzle, Thunderstorm
   humidity: number;
