@@ -1,4 +1,4 @@
-# Render Node hosting configuration. See RENDER_DEPLOYMENT.md.
+# Node.js deployment configuration. Supply environment values in the hosting dashboard.
 services:
   - type: web
     name: yatra-vibe-finder

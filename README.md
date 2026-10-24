@@ -1,99 +1,88 @@
 # YatraAI
 
-**Find an Indian destination that fits your mood, budget, and travel plans.**
+### Travel recommendations shaped around you
 
-[Live website](https://yatra-vibe-finder.onrender.com/) · [Repository](https://github.com/Ayushkumar2552/yatra-vibe-finder)
+YatraAI helps travellers discover Indian destinations that match their interests, budget, season, and travel plans. Its rule-based recommendation engine explains why each destination fits, making comparisons clear and practical.
 
-YatraAI is an explainable, rule-based travel recommendation application. It ranks destinations using your preferences and shows why each place fits. It does not use a generative language model or promise live booking prices.
+**[Explore the live application](https://yatra-vibe-finder.onrender.com/)**
 
 ## Features
 
-- Explore Indian destinations by travel interests, with destination galleries and detail pages.
-- Plan around your starting location, budget, group size, duration, season, climate, and transport preferences.
-- Compare weighted fit scores, estimated cost breakdowns, and suggested itineraries.
-- View Open-Meteo weather and forecasts, with explicit unavailable states when data cannot be fetched.
-- Discover photo spots and enjoy cinematic travel media.
-- Create an email/password account, save destinations, and sync trip reminders through Supabase.
-- Receive in-app departure alerts and optional browser notifications while the website is open.
+- **Personalised recommendations** based on budget, interests, climate, season, trip duration, group size, and travel practicality.
+- **Explainable rankings** with match scores and reasons for each recommendation.
+- **Trip planning** with estimated cost breakdowns and suggested itineraries.
+- **Destination discovery** through galleries, destination details, and photo spots.
+- **Weather information** powered by Open-Meteo, with clear availability states.
+- **Personal accounts** to save destinations and synchronise trip reminders.
+- **Departure reminders** through in-app alerts and optional browser notifications.
 
-## Technology
+## How recommendations work
 
-React 19, TypeScript, TanStack Start/Router/Query, Vite, Tailwind CSS, Radix UI, Nitro, and Supabase Auth/PostgreSQL. The production Node server runs on Render. Vitest and Testing Library cover core behavior.
+1. Collect the traveller's preferences and trip constraints.
+2. Evaluate destinations against rules in the recommendation engine.
+3. Combine applicable factors into a weighted score, normalising weights when a factor is unavailable.
+4. Rank feasible destinations first and explain the results.
 
-The application builds with standard Vite plugins. A Lovable account, subscription, or build wrapper is not required to run it. Historical commits and original media provenance may still mention the original editor.
+YatraAI uses a rule-based approach rather than a trained machine-learning model or generative language model. Scores indicate preference fit; costs and itineraries are estimates, not booking quotations.
 
-## Local development
+## Technology stack
 
-Use Node.js 22.12 or later within Node 22, and npm.
+| Layer | Technologies |
+| --- | --- |
+| Interface | React, TypeScript, Tailwind CSS, Radix UI |
+| Application | TanStack Start, Router, and Query |
+| Build and server | Vite, Nitro, Node.js |
+| Accounts and persistence | Supabase Auth and PostgreSQL |
+| Testing | Vitest and Testing Library |
+
+Destination information is maintained in the application data layer. Account data, saved destinations, and synchronised reminders use Supabase, with per-user database access policies.
+
+## Getting started
+
+**Requirements:** Node.js 22.12+ within Node 22, npm, and a Supabase project.
 
 ```sh
 git clone https://github.com/Ayushkumar2552/yatra-vibe-finder.git
 cd yatra-vibe-finder
 npm ci
 cp .env.example .env
-# Fill in your Supabase project URL and publishable key.
+```
+
+Fill in the environment placeholders with your own project configuration. Apply the SQL migration in `supabase/migrations/` to your database, then start the development server:
+
+```sh
 npm run dev
 ```
 
-Open the address printed by Vite. Apply `supabase/migrations/202610230001_user_travel_data.sql` once to a new Supabase project before using saved destinations and reminders. It creates both tables and per-user row-level security policies.
+Never commit local environment files or secret keys. Production environment values belong in the hosting provider's configuration.
 
-The development environment needs these variables:
+## Commands
 
-| Variable | Purpose |
+| Command | Purpose |
 | --- | --- |
-| `AUTH_PROVIDER=supabase` | Verify accounts with Supabase on the server |
-| `VITE_AUTH_PROVIDER=supabase` | Use the application's email/password account screen |
-| `SUPABASE_URL` | Your Supabase project URL |
-| `SUPABASE_PUBLISHABLE_KEY` | Your project's publishable key; no service-role key is needed |
-| `AMADEUS_CLIENT_ID`, `AMADEUS_CLIENT_SECRET` | Optional server-side travel integration credentials |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create the production Node.js build |
+| `npm start` | Run the production server |
+| `npm test` | Run automated tests |
+| `npx tsc --noEmit` | Check TypeScript types |
+| `npm run lint` | Run code quality checks |
 
-Keep credentials out of Git. Open-Meteo weather does not require an API key in the current integration. Vite loads `.env` for development; production server variables must be supplied by the hosting environment.
+`render.yaml` provides the hosting configuration. The `build:render` and `start:render` aliases support the existing deployment.
 
-## Build and deploy on Render
+## Project structure
 
-```sh
-npm run build:render
-npm run start:render
+```text
+src/
+  components/    Shared interface components
+  data/          Destination knowledge base
+  lib/           Recommendation engine and integrations
+  routes/        Application pages
+  test/          Automated tests
+public/          Static images and videos
+supabase/
+  migrations/    Database schema and access policies
 ```
 
-Render build command: `npm ci --include=dev && npm run build:render`.
-Start command: `npm run start:render`.
+## Usage notes
 
-Set the Supabase server variables above, `NODE_VERSION=22`, `NODE_ENV=production`, and `HOST=0.0.0.0`. The build command selects the Supabase client flow and Nitro Node server output. See `render.yaml` and [deployment notes](RENDER_DEPLOYMENT.md).
-
-The live service tracks `deploy/render-supabase`. Changes made only on `main` do not deploy automatically to that service. The legacy `npm run build` command retains the separate Sites/Cloudflare artifact layout; use `build:render` for this deployment.
-
-## Authentication status
-
-Email/password signup is enabled. **Email confirmation is temporarily disabled for the demo**, so new accounts can sign in immediately and email ownership is not verified. Configure a mail provider and a complete confirmation flow before re-enabling confirmation. The Supabase Site URL is the Render website, with `/account` allowed as a redirect.
-
-## How recommendations work
-
-The engine scores budget, interests, weather, climate, season, travel practicality, duration, and group fit. Unavailable or inapplicable factors are excluded and weights are normalized. Feasible destinations rank first; rule explanations describe the recommendation without adding the same benefit twice. Scores express preference fit, not a probability or guarantee.
-
-| Area | Source |
-| --- | --- |
-| Destination knowledge base | `src/data/destinations.ts` |
-| Scoring and explanations | `src/lib/engine/recommend.ts` |
-| Budget estimates and itinerary | `src/lib/engine/estimate.ts`, `itinerary.ts` |
-| Weather integration | `src/lib/weather/` |
-| Accounts and sessions | `src/lib/auth/` |
-| Saved trips and reminder sync | `src/lib/trips/` |
-| Database schema and policies | `supabase/migrations/` |
-| Shared destination galleries | `src/components/DestinationGallery.tsx` |
-
-## Validation
-
-```sh
-npm test
-npx tsc --noEmit
-npm run build:render
-```
-
-## Demo limitations and media
-
-- Budgets and itineraries are estimates, not booking quotations or availability guarantees.
-- Departure reminders require an open website; browser sleep can delay alerts. Database synchronization is not a background notification scheduler.
-- Weather, routing, and photo sources depend on external services and their terms/availability.
-- Keep image/video source credits and licensing information when replacing media. Generated photo-story illustrations are documented in `public/images/photo-stories/README.md`.
-- No repository-wide license is granted by this README; third-party media and packages retain their own terms.
+Weather and travel integrations depend on external service availability. Departure alerts require the website to remain open; browser sleep can delay notifications. Generated illustrations are identified in the media documentation, and third-party assets retain their original terms and credits.

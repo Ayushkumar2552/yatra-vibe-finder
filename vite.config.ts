@@ -14,7 +14,7 @@ export default defineConfig(({ command }) => ({
       server: { entry: 'server' },
       importProtection: { behavior: 'error', client: { files: ['**/server/**'], specifiers: ['server-only'] } },
     }),
-    ...(command === 'build' ? [nitro({ preset: process.env.DEPLOY_TARGET === 'render' ? 'node-server' : 'cloudflare-module' })] : []),
+    ...(command === 'build' ? [nitro({ preset: 'node-server' })] : []),
     react(),
   ],
 }));
