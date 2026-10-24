@@ -15,7 +15,7 @@ export const reverseGeocode = createServerFn({ method: "GET" })
     try {
       const r = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${data.lat}&lon=${data.lon}&zoom=10`,
-        { headers: { "User-Agent": "YatraAI/1.0 (https://yatra-vibe-finder.lovable.app)" } },
+        { headers: { "User-Agent": "YatraAI/1.0 (https://yatra-vibe-finder.onrender.com)" } },
       );
       if (!r.ok) return { label: null };
       const j = (await r.json()) as NominatimReverse;

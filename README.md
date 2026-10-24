@@ -1,36 +1,99 @@
-# Remix of Yatra AI Explorer
+# YatraAI
 
-Build a polished full-stack India AI travel destination recommendation website inspired by the interaction/design quality of mindtrip.ai, but with an original brand, original copy, and clearly distinct layout/details (do not copy Mindtrip branding, logo, or proprietary assets). The user supplied three screenshots as visual references showing the desired immersive full-width travel hero aesthetic: one beach/pool scene, one orange vintage van with a couple by the ocean, and one desert/camel scene. Recreate that FEEL with replaceable hero media slots and smooth crossfading/auto-rotating background video support. IMPORTANT: the screenshots themselves are reference images, not the original videos. Build the media architecture so the owner can drop in beach.mp4, roadtrip.mp4, and desert.mp4 later; provide tasteful fallback hero imagery/gradients if videos are absent. Do not claim to have copied the exact videos from mindtrip.ai.
+**Find an Indian destination that fits your mood, budget, and travel plans.**
 
-Project concept/name: YatraAI (or a similarly original premium India-travel name). Main headline could be “India, picked for your mood.” / “Find the trip that fits you.” Hero should be cinematic, nearly full viewport, transparent/floating nav over media, large bold typography, premium whitespace, rounded pill controls, subtle animations. Navbar: logo, Explore, Beaches, Mountains, Heritage, Road Trips, AI Planner, Weather; right side Saved Trips and “Plan my trip” CTA. No cookie banner needed.
+[Live website](https://yatra-vibe-finder.onrender.com/) · [Repository](https://github.com/Ayushkumar2552/yatra-vibe-finder)
 
-CORE PRODUCT: AI/rule-based destination recommender for travel within India. User inputs current/start location, total budget in INR, number of travelers, trip duration, preferred travel vibe/categories, preferred climate, travel month/dates, transport preference, and optionally “use current weather”. Fetch/live-weather integration should be architected cleanly using a weather API environment variable, with a mock/fallback weather provider so the app runs immediately without keys. Show current temperature, condition, feels-like and a weather suitability indicator for recommendations. If browser geolocation permission is available, allow “Use my location”; otherwise manual city selection. Never silently assume exact location.
+YatraAI is an explainable, rule-based travel recommendation application. It ranks destinations using your preferences and shows why each place fits. It does not use a generative language model or promise live booking prices.
 
-Recommendation engine: implement a transparent weighted/rule-based scoring system appropriate for an AI college mini-project. Rank destinations using budget fit, weather suitability, distance/travel practicality, user vibe/interests, seasonality, duration, and group type. Show match percentage and a “Why this fits you” explanation with the factors/rules that fired. Keep the rule engine/data separated from UI so it can be explained in a viva. Include forward-chaining-style rules or explicit IF/THEN rules in code and an optional “How AI decided” expandable panel. Do not pretend the rule-based model is generative AI.
+## Features
 
-DESTINATION DATA: Seed a substantial India dataset (at least 35–50 destinations) across categories. Must include Goa, Lakshadweep, Andaman & Nicobar, Gokarna, Pondicherry/Puducherry, Varkala, Kovalam for beaches; Manali, Shimla, Mussoorie, Nainital, Darjeeling, Munnar, Ooty, Coorg, Kodaikanal, Gangtok for hill stations; Leh-Ladakh, Spiti Valley, Kashmir/Gulmarg/Pahalgam, Auli, Rishikesh and key Uttarakhand mountain destinations for mountains/adventure; Varanasi/Kashi, Ayodhya, Jaipur, Udaipur, Jodhpur, Jaisalmer, Agra, Hampi, Khajuraho, Amritsar, Mysuru, Sanchi and other heritage/spiritual options; plus popular nature/mind-refreshment places like Meghalaya/Shillong/Cherrapunji, Kaziranga, Rann of Kutch, Kerala/Alleppey, Wayanad. Each record should include state/UT, categories/vibes, climate tags, best months, approximate daily budget tiers per person, typical trip length, latitude/longitude, hero/photo URL or fallback, highlights, and weather suitability rules. Clearly label budget numbers as estimates, not live booking quotes.
+- Explore Indian destinations by travel interests, with destination galleries and detail pages.
+- Plan around your starting location, budget, group size, duration, season, climate, and transport preferences.
+- Compare weighted fit scores, estimated cost breakdowns, and suggested itineraries.
+- View Open-Meteo weather and forecasts, with explicit unavailable states when data cannot be fetched.
+- Discover photo spots and enjoy cinematic travel media.
+- Create an email/password account, save destinations, and sync trip reminders through Supabase.
+- Receive in-app departure alerts and optional browser notifications while the website is open.
 
-RESULT EXPERIENCE: On submit, transition to a beautiful results section/page with top 3 hero recommendations plus additional matches. Each destination card should show image, destination/state, match %, current weather/temp if available, estimated total trip budget (for selected people/days), best time, suggested days, key experiences, and badges such as Beach / Heritage / Adventure / Relax. Add filters and sorting for match, budget, weather, and category. Provide a budget breakdown: stay, food, local transport, activities, intercity travel estimate. Use reasonable demo heuristics and visibly say “Estimated”. Add a simple day-wise itinerary generator using curated destination activities/rules. Add Save/Favorite using local storage.
+## Technology
 
-PAGES/SECTIONS: immersive Home; AI Planner wizard; Explore India grid; Destination detail page; Weather-aware recommendations; Saved Trips; About/How it works. On home below hero, include a prominent conversational planner/search box (“Where should I go in India?”) and quick prompt pills such as “Beach escape under ₹20k”, “Cool mountains this weekend”, “3-day heritage trip”, “Peaceful spiritual break”, “Road trip from Pune”. Then category strips/cards for Beaches, Mountains, Heritage & Spiritual, Desert, Nature, Road Trips.
+React 19, TypeScript, TanStack Start/Router/Query, Vite, Tailwind CSS, Radix UI, Nitro, and Supabase Auth/PostgreSQL. The production Node server runs on Render. Vitest and Testing Library cover core behavior.
 
-VISUAL DESIGN: premium editorial travel aesthetic, not generic Streamlit. Full-bleed media, black/cream typography, warm neutral surfaces, glassy overlay where appropriate, 24–32px rounded cards, large modern sans-serif headings, responsive mobile layout. Smooth hero media crossfade every ~7–10 seconds with pause/play and accessible reduced-motion behavior. Add subtle text transition synced to scenes: Beach → “Breathe by the blue.” Road trip → “Take the long way.” Desert → “Chase a different horizon.” Original wording only. Use Lucide icons. Avoid excessive gradients and dashboard-like clutter.
+The application builds with standard Vite plugins. A Lovable account, subscription, or build wrapper is not required to run it. Historical commits and original media provenance may still mention the original editor.
 
-TECH: Lovable default React/TypeScript/Tailwind/shadcn stack. Organize components cleanly. Make all core demo functionality work without login or paid APIs. Add README/in-app developer note explaining where to put weather API key and hero mp4 files, how the scoring works, and which files contain destination data/rules. If a live weather key is missing, visibly mark weather as Demo/Estimated rather than fabricating live data. Provide robust loading/error states.
+## Local development
 
-This is a college mini-project, so prioritize a working, impressive demonstration plus explainable AI. The site should feel production-quality and highly visual while remaining original and legally distinct from Mindtrip.
-
-
-
-
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Use Node.js 22.12 or later within Node 22, and npm.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+git clone https://github.com/Ayushkumar2552/yatra-vibe-finder.git
+cd yatra-vibe-finder
+npm ci
+cp .env.example .env
+# Fill in your Supabase project URL and publishable key.
 npm run dev
 ```
+
+Open the address printed by Vite. Apply `supabase/migrations/202610230001_user_travel_data.sql` once to a new Supabase project before using saved destinations and reminders. It creates both tables and per-user row-level security policies.
+
+The development environment needs these variables:
+
+| Variable | Purpose |
+| --- | --- |
+| `AUTH_PROVIDER=supabase` | Verify accounts with Supabase on the server |
+| `VITE_AUTH_PROVIDER=supabase` | Use the application's email/password account screen |
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_PUBLISHABLE_KEY` | Your project's publishable key; no service-role key is needed |
+| `AMADEUS_CLIENT_ID`, `AMADEUS_CLIENT_SECRET` | Optional server-side travel integration credentials |
+
+Keep credentials out of Git. Open-Meteo weather does not require an API key in the current integration. Vite loads `.env` for development; production server variables must be supplied by the hosting environment.
+
+## Build and deploy on Render
+
+```sh
+npm run build:render
+npm run start:render
+```
+
+Render build command: `npm ci --include=dev && npm run build:render`.
+Start command: `npm run start:render`.
+
+Set the Supabase server variables above, `NODE_VERSION=22`, `NODE_ENV=production`, and `HOST=0.0.0.0`. The build command selects the Supabase client flow and Nitro Node server output. See `render.yaml` and [deployment notes](RENDER_DEPLOYMENT.md).
+
+The live service tracks `deploy/render-supabase`. Changes made only on `main` do not deploy automatically to that service. The legacy `npm run build` command retains the separate Sites/Cloudflare artifact layout; use `build:render` for this deployment.
+
+## Authentication status
+
+Email/password signup is enabled. **Email confirmation is temporarily disabled for the demo**, so new accounts can sign in immediately and email ownership is not verified. Configure a mail provider and a complete confirmation flow before re-enabling confirmation. The Supabase Site URL is the Render website, with `/account` allowed as a redirect.
+
+## How recommendations work
+
+The engine scores budget, interests, weather, climate, season, travel practicality, duration, and group fit. Unavailable or inapplicable factors are excluded and weights are normalized. Feasible destinations rank first; rule explanations describe the recommendation without adding the same benefit twice. Scores express preference fit, not a probability or guarantee.
+
+| Area | Source |
+| --- | --- |
+| Destination knowledge base | `src/data/destinations.ts` |
+| Scoring and explanations | `src/lib/engine/recommend.ts` |
+| Budget estimates and itinerary | `src/lib/engine/estimate.ts`, `itinerary.ts` |
+| Weather integration | `src/lib/weather/` |
+| Accounts and sessions | `src/lib/auth/` |
+| Saved trips and reminder sync | `src/lib/trips/` |
+| Database schema and policies | `supabase/migrations/` |
+| Shared destination galleries | `src/components/DestinationGallery.tsx` |
+
+## Validation
+
+```sh
+npm test
+npx tsc --noEmit
+npm run build:render
+```
+
+## Demo limitations and media
+
+- Budgets and itineraries are estimates, not booking quotations or availability guarantees.
+- Departure reminders require an open website; browser sleep can delay alerts. Database synchronization is not a background notification scheduler.
+- Weather, routing, and photo sources depend on external services and their terms/availability.
+- Keep image/video source credits and licensing information when replacing media. Generated photo-story illustrations are documented in `public/images/photo-stories/README.md`.
+- No repository-wide license is granted by this README; third-party media and packages retain their own terms.

@@ -1,4 +1,4 @@
-# Hosting configuration; finish external authentication before publishing.
+# Render Node hosting configuration. See RENDER_DEPLOYMENT.md.
 services:
   - type: web
     name: yatra-vibe-finder
