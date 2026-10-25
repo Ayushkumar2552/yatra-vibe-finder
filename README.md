@@ -259,3 +259,14 @@ https://yatra-vibe-finder.onrender.com/
 ## GitHub Repository
 
 https://github.com/Ayushkumar2552/yatra-vibe-finder
+
+## License
+
+This project is licensed under the **MIT License**.
+
+You are free to use, modify, and distribute this software in accordance with the terms of the license.
+
+For more details, see the [LICENSE](./LICENSE) file.
+
+© 2026 Ayush Kumar
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
